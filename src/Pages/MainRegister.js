@@ -1,9 +1,16 @@
 import React, { useState } from "react";
 import Footer from "../Components/Footer";
 import ReCAPTCHA from "react-google-recaptcha";
+import axios from "axios";
 import "./Pages.css";
 
 function MainRegister() {
+  const [error,seterror] = useState({
+    error: "",
+    email: "",
+    phone_number: "",
+    student_no: "",
+  })
   const [formData, setFormData] = useState({
     name: "",
     student_no: "",
@@ -21,14 +28,38 @@ function MainRegister() {
     setFormData({ ...formData, [name]: value });
   };
 
-  const submitHandler = (e) => {
+  const submitHandler = async (e) => {
     e.preventDefault();
-    console.log(formData);
-    
-  };
+    axios.post('https://registrationportal-hrxz.onrender.com/ad/register/', formData)
+  .then(response => {
+    // Handle successful response
+    alert(response.data.message);
+
+  })
+  .catch(error => {
+    // Handle error
+    if (error.response) {
+      // The request was made and the server responded with a status code
+      seterror(error.response.data);
+      
+    }
+  });
+  console.log({error})
+  if(error.email !== undefined && error.email !== ""){
+    alert(error.email);
+  }
+  if(error.student_no !== undefined && error.student_no !== ""){
+    alert(error.student_no);
+  }
+  if(error.phone_number !== undefined && error.phone_number !== ""){
+    alert(error.phone_number);
+  }
+
+  }
+
+
 
   function onChange1(value) {
-        console.log("Captcha value:", value);
       setFormData({...formData , captcha : value});
      }
 
@@ -40,7 +71,7 @@ function MainRegister() {
           <h1 className="h1_name_RegisterPage  text-white font-normal text-5xl text-center m-2">
             Register
           </h1>
-          <form onSubmit={submitHandler}>
+          <form>
             <div className="Register_form flex justify-around items-top my-10">
               <section className="Left_register flex flex-col w-[25rem]">
                 <label className="text-white">Name:</label>
@@ -87,10 +118,8 @@ function MainRegister() {
                   onChange={onChange}
                 >
                   <option value="select">Select</option>
-                  <option value="1">1st</option>
                   <option value="2">2nd</option>
                   <option value="3">3rd</option>
-                  <option value="4">4th</option>
                 </select>
 
                 <br></br>
@@ -103,8 +132,8 @@ function MainRegister() {
                   onChange={onChange}
                 >
                   <option value="select">Select</option>
-                  <option value="Hoster">Hostler</option>
-                  <option value="Dayscholar">Day Scholar</option>
+                  <option value="Hosteler">Hosteler</option>
+                  <option value="Day scholar">Day Scholar</option>
                 </select>
               </section>
               <section className="Right_register flex flex-col m-0 w-[25rem]">
@@ -118,11 +147,16 @@ function MainRegister() {
                   <option value="select">Select</option>
                   <option value="CS">CS</option>
                   <option value="CSE">CSE</option>
-                  <option value="CS/IT">CS/IT</option>
+                  <option value="CSIT">CS/IT</option>
+                  <option value="CSE(AIML)">CSE(AIML)</option>
+                  <option value="CSE(DS)">CSE(DS)</option>
+                  <option value="CSE(Hindi)">CSE(Hindi)</option>
+                  <option value="EN">EN</option>
+                  <option value="AIML">AIML</option>
                   <option value="IT">IT</option>
                   <option value="EC">EC</option>
-                  <option value="Mechanical">Mechanical</option>
-                  <option value="EC">EC</option>
+                  <option value="ME">Mechanical</option>
+                  <option value="ECE">ECE</option>
                 </select>
 
                 <br></br>
@@ -169,7 +203,7 @@ function MainRegister() {
               </section>
             </div>
             <div className="flex justify-center">
-              <button className="Submit_Button bg-white w-[200px] h-[60px] rounded-lg text-xl">
+              <button className="Submit_Button bg-white w-[200px] h-[60px] rounded-lg text-xl" onClick={submitHandler}>
                 Register Now!
               </button>
             </div>
